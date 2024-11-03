@@ -1,3 +1,30 @@
-h1 {
-  text-align: center;
-}
+ <style>
+        body {
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-family: 'Arial', sans-serif;
+        }
+        .card {
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+        }
+        .card-img-top {
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+            height: 250px;
+            object-fit: cover;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+        .form-control {
+            width: 300px;
+            display: inline-block;
+        }
+        .btn {
+            margin-left: 10px;
+        }
+    </style>
