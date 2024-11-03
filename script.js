@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
           return response.json();
         })
         .then(data => {
-          personajes.push(...data.data); // Almacenar datos
+          personajes.push(data.data); // Almacenar datos
         })
         .catch(error => {
           console.error('Error fetching characters:', error);
