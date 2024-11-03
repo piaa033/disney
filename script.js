@@ -7,25 +7,29 @@ document.addEventListener('DOMContentLoaded', function() {
   // Obtener todos los personajes al cargar
   const fetchCharacters = async () => {
     for (let i = 1; i < 150; i++) {
-      await fetch(`https://api.disneyapi.dev/character/${i}`)
-        .then(response => {
-          if (!response.ok) throw new Error('Network response was not ok');
-          return response.json();
-        })
-        .then(data => {
+      try {
+        const response = await fetch(`https://api.disneyapi.dev/character/${i}`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        
+        // Asegúrate de que `data.data` sea un array antes de intentar usarlo
+        if (data.data) {
           personajes.push(data.data); // Almacenar datos
-        })
-        .catch(error => {
-          console.error('Error fetching characters:', error);
-        });
+        }
+      } catch (error) {
+        console.error('Error fetching characters:', error);
+      }
     }
   };
 
+  // Ejecutar la función para obtener personajes
   fetchCharacters().then(() => {
     btn.addEventListener('click', function(event) {
       event.preventDefault(); // Evitar el comportamiento por defecto del botón
       const query = buscador.value.toLowerCase();
-      const filtrados = personajes.filter(character => {
+
+      // Filtrar personajes
+      const filtrados = personajes.flat().filter(character => { // Usar flat() para aplanar el array
         return character.name.toLowerCase().includes(query) ||
                character.films.some(film => film.toLowerCase().includes(query)) ||
                character.shortFilms.some(shortFilm => shortFilm.toLowerCase().includes(query)) ||
