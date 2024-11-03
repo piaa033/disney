@@ -17,7 +17,8 @@ document.addEventListener('DOMContentLoaded', function() {
       console.error('Error fetching characters:', error);
     });
 
-  btn.addEventListener('click', function() {
+  btn.addEventListener('click', function(event) {
+    event.preventDefault(); // Evitar el comportamiento por defecto del botón
     const query = buscador.value.toLowerCase();
     const filtrados = personajes.filter(character => {
       return character.name.toLowerCase().includes(query) ||
@@ -48,9 +49,3 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
-
-    );
-  });
-});
-
-  
