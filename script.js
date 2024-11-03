@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
         
-        // Asegúrate de que `data.data` sea un array antes de intentar usarlo
         if (data.data) {
           personajes.push(data.data); // Almacenar datos
         }
@@ -29,13 +28,16 @@ document.addEventListener('DOMContentLoaded', function() {
       const query = buscador.value.toLowerCase();
 
       // Filtrar personajes
-      const filtrados = personajes.flat().filter(character => { // Usar flat() para aplanar el array
-        return character.name.toLowerCase().includes(query) ||
-               character.films.some(film => film.toLowerCase().includes(query)) ||
-               character.shortFilms.some(shortFilm => shortFilm.toLowerCase().includes(query)) ||
-               character.tvShows.some(tvShow => tvShow.toLowerCase().includes(query)) ||
-               character.parkAttractions.some(attraction => attraction.toLowerCase().includes(query)) ||
-               character.videoGames.some(videoGame => videoGame.toLowerCase().includes(query));
+      const filtrados = personajes.flat().filter(character => {
+        // Verificar si las propiedades existen antes de usar toLowerCase
+        const nameMatches = character.name && character.name.toLowerCase().includes(query);
+        const filmsMatches = character.films && character.films.some(film => film.toLowerCase().includes(query));
+        const shortFilmsMatches = character.shortFilms && character.shortFilms.some(shortFilm => shortFilm.toLowerCase().includes(query));
+        const tvShowsMatches = character.tvShows && character.tvShows.some(tvShow => tvShow.toLowerCase().includes(query));
+        const attractionsMatches = character.parkAttractions && character.parkAttractions.some(attraction => attraction.toLowerCase().includes(query));
+        const videoGamesMatches = character.videoGames && character.videoGames.some(videoGame => videoGame.toLowerCase().includes(query));
+
+        return nameMatches || filmsMatches || shortFilmsMatches || tvShowsMatches || attractionsMatches || videoGamesMatches;
       });
 
       // Limpiar el contenedor antes de mostrar nuevos resultados
@@ -68,3 +70,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
+
