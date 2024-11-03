@@ -5,47 +5,62 @@ document.addEventListener('DOMContentLoaded', function() {
   let personajes = []; // Almacena todos los personajes
 
   // Obtener todos los personajes al cargar
-  fetch('https://api.disneyapi.dev/character')
-    .then(response => {
-      if (!response.ok) throw new Error('Network response was not ok');
-      return response.json();
-    })
-    .then(data => {
-      personajes = data.data; // Almacenar datos
-    })
-    .catch(error => {
-      console.error('Error fetching characters:', error);
-    });
-
-  btn.addEventListener('click', function(event) {
-    event.preventDefault(); // Evitar el comportamiento por defecto del botón
-    const query = buscador.value.toLowerCase();
-    const filtrados = personajes.filter(character => {
-      return character.name.toLowerCase().includes(query) ||
-             character.films.some(film => film.toLowerCase().includes(query)) ||
-             character.shortFilms.some(shortFilm => shortFilm.toLowerCase().includes(query)) ||
-             character.tvShows.some(tvShow => tvShow.toLowerCase().includes(query)) ||
-             character.parkAttractions.some(attraction => attraction.toLowerCase().includes(query)) ||
-             character.videoGames.some(videoGame => videoGame.toLowerCase().includes(query));
-    });
-
-    // Limpiar el contenedor antes de mostrar nuevos resultados
-    contenedor.innerHTML = '';
-
-    // Mostrar los personajes filtrados
-    if (filtrados.length > 0) {
-      filtrados.forEach(character => {
-        const personajeDiv = document.createElement('div');
-        personajeDiv.className = 'personaje';
-        personajeDiv.innerHTML = `
-          <h2>${character.name}</h2>
-          <img src="${character.imageUrl}" alt="${character.name}">
-          <p><a href="${character.sourceUrl}" target="_blank">Más información</a></p>
-        `;
-        contenedor.appendChild(personajeDiv);
-      });
-    } else {
-      contenedor.innerHTML = '<p>No se encontraron resultados.</p>';
+  const fetchCharacters = async () => {
+    for (let i = 1; i < 150; i++) {
+      await fetch(`https://api.disneyapi.dev/character/${i}`)
+        .then(response => {
+          if (!response.ok) throw new Error('Network response was not ok');
+          return response.json();
+        })
+        .then(data => {
+          personajes.push(...data.data); // Almacenar datos
+        })
+        .catch(error => {
+          console.error('Error fetching characters:', error);
+        });
     }
+  };
+
+  fetchCharacters().then(() => {
+    btn.addEventListener('click', function(event) {
+      event.preventDefault(); // Evitar el comportamiento por defecto del botón
+      const query = buscador.value.toLowerCase();
+      const filtrados = personajes.filter(character => {
+        return character.name.toLowerCase().includes(query) ||
+               character.films.some(film => film.toLowerCase().includes(query)) ||
+               character.shortFilms.some(shortFilm => shortFilm.toLowerCase().includes(query)) ||
+               character.tvShows.some(tvShow => tvShow.toLowerCase().includes(query)) ||
+               character.parkAttractions.some(attraction => attraction.toLowerCase().includes(query)) ||
+               character.videoGames.some(videoGame => videoGame.toLowerCase().includes(query));
+      });
+
+      // Limpiar el contenedor antes de mostrar nuevos resultados
+      contenedor.innerHTML = '';
+
+      // Mostrar los personajes filtrados
+      if (filtrados.length > 0) {
+        filtrados.forEach(character => {
+          const personajeDiv = document.createElement('div');
+          personajeDiv.className = 'col-md-4 mb-4'; // Tres tarjetas por fila
+          personajeDiv.innerHTML = `
+            <div class="card">
+              <img src="${character.imageUrl}" class="card-img-top" alt="${character.name}">
+              <div class="card-body">
+                <h5 class="card-title">${character.name}</h5>
+                <p class="card-text"><strong>Películas:</strong> ${character.films.join(', ') || 'N/A'}</p>
+                <p class="card-text"><strong>Series:</strong> ${character.tvShows.join(', ') || 'N/A'}</p>
+                <p class="card-text"><strong>Cortos:</strong> ${character.shortFilms.join(', ') || 'N/A'}</p>
+                <p class="card-text"><strong>Videojuegos:</strong> ${character.videoGames.join(', ') || 'N/A'}</p>
+                <p class="card-text"><strong>Parques Disney:</strong> ${character.parkAttractions.join(', ') || 'N/A'}</p>
+                <p class="card-text"><a href="${character.sourceUrl}" target="_blank">Más información</a></p>
+              </div>
+            </div>
+          `;
+          contenedor.appendChild(personajeDiv);
+        });
+      } else {
+        contenedor.innerHTML = '<p>No se encontraron resultados.</p>';
+      }
+    });
   });
 });
